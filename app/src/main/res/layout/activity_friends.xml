@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FriendsActivity"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/layout_F_E_title"
+        android:background="@color/colorPrimary">
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/editButton"
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_menu_edit"
+            android:background="@drawable/seletor_add_edit" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/addFriendButton"
+            android:src="@android:drawable/ic_menu_add"
+            android:background="@drawable/seletor_add_edit" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_F_E_title"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/addFriendButton"
+            android:layout_toLeftOf="@+id/editButton"
+            android:layout_alignTop="@+id/editButton"
+            android:layout_alignBottom="@+id/editButton"
+            android:gravity="center"
+            android:textSize="35sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayout2">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="MAP"
+            android:id="@+id/backMapButton"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:textColor="@android:color/holo_blue_bright"
+            android:background="@drawable/selector_black" />
+
+        <ImageView
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView_separation"
+            android:background="@color/colorPrimary" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="ENEMIES"
+            android:id="@+id/button_F_E"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:background="@drawable/selector_black"
+            android:textColor="@android:color/holo_red_dark" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/friendsListView"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/layout_F_E_title"
+        android:layout_above="@+id/linearLayout2"
+        android:background="#222" />
+</RelativeLayout>
