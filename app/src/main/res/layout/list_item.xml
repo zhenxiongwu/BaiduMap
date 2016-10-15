@@ -8,17 +8,18 @@
         android:layout_height="60dp"
         android:id="@+id/listItemTextView"
         android:textSize="25sp"
-        android:background="@drawable/enemies_item_background"
+        android:background="@drawable/selector_list_item"
         android:gravity="center_vertical"
         android:paddingLeft="40dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="0dp"
+        android:textStyle="bold|italic" />
 
     <Button
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/deleteItemButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
@@ -29,12 +30,13 @@
         android:visibility="gone" />
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:id="@+id/imageView_friends_icon"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/icon_friend" />
+        android:src="@drawable/icon_friends"
+        android:layout_marginLeft="3dp" />
 
 </RelativeLayout>

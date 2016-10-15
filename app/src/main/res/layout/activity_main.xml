@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false"
-        android:layout_marginTop="22dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true" />
 
@@ -19,9 +18,8 @@
         android:layout_height="match_parent"
         android:id="@+id/imageView"
         android:focusable="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/foreground4"
-        android:background="@drawable/background12" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/png_background_2" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -34,57 +32,62 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="ENEMIES"
+            android:layout_height="wrap_content"
             android:id="@+id/button_enemies"
             android:layout_weight="1"
-            android:textSize="30sp"
             android:clickable="false"
-            android:background="@drawable/selector_black"
-            android:textColor="#f00" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/button_refresh"
-            android:background="@drawable/fresh_seletor"
-            android:clickable="true" />
+            android:background="@drawable/selecor_button_enemies"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp" />
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="FRIENDS"
+            android:layout_height="wrap_content"
             android:id="@+id/button_friends"
             android:layout_weight="1"
-            android:textSize="30sp"
             android:clickable="false"
-            android:background="@drawable/selector_black"
-            android:textColor="#0f0" />
+            android:background="@drawable/selector_button_friends"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
     </LinearLayout>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="获取好友位置"
-        android:id="@+id/button_get_friends_location"
-        android:layout_marginTop="20dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/button_locate"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/selector_button_locate"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/selector_get_location"
-        android:textColor="#0f0" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="2dp" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="获取敌人位置"
-        android:id="@+id/button_get_enemies_location"
-        android:background="@drawable/selector_get_location"
-        android:textColor="#f00"
-        android:layout_below="@+id/button_get_friends_location"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/button_help"
+        android:layout_alignBottom="@+id/button_locate"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp" />
+        android:background="@drawable/selector_button_help" />
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/button_refresh"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="2dp"
+        android:background="@drawable/selector_button_refresh" />
+
+    <ImageView
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:id="@+id/imageView_scanline"
+        android:scaleType="fitCenter"
+        android:layout_centerInParent="true"
+        android:src="@drawable/scanline3" />
 
 </RelativeLayout>

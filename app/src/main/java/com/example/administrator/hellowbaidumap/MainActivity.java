@@ -2,11 +2,17 @@ package com.example.administrator.hellowbaidumap;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -46,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isFirstLoc = true; // 是否首次定位
 
-/*    //覆盖物相关
-    BitmapDescriptor bd_friends , bd_enemies;//位图描述*/
 
     //控件相关
     MapView mMapView;
@@ -55,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
     Button button_enemies;
     Button button_friends;
     Button button_refresh;
-    Button button_get_friends_location;
-    Button button_get_enemies_location;
+    Button button_locate;
+    Button button_help;
+    ImageView imageView_scanline;
+    Animation operatingAnim;
 
     Object object;
 
@@ -85,17 +91,19 @@ public class MainActivity extends AppCompatActivity {
             SomeBody.enemies = (ArrayList<SomeBody>) object;
         }
 
-
-        button_refresh = (Button) findViewById(R.id.button_refresh);
-        button_refresh.setOnClickListener(new View.OnClickListener() {
+        button_help = (Button) findViewById(R.id.button_help);
+        button_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFriendsLocation();
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("版本信息")
+                        .setMessage(R.string.app_version)
+                        .show();
             }
         });
 
-        button_get_friends_location = (Button) findViewById(R.id.button_get_friends_location);
-        button_get_friends_location.setOnClickListener(new View.OnClickListener() {
+        button_refresh = (Button) findViewById(R.id.button_refresh);
+        button_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SmsManager smsManager = SmsManager.getDefault();
@@ -103,20 +111,21 @@ public class MainActivity extends AppCompatActivity {
                     smsManager.sendTextMessage(someBody.getPhoneNumber(), null,
                             "where are you", null, null);
                 }
-            }
-        });
-
-        button_get_enemies_location = (Button) findViewById(R.id.button_get_enemies_location);
-        button_get_enemies_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SmsManager smsManager = SmsManager.getDefault();
                 for (SomeBody someBody : SomeBody.enemies) {
                     smsManager.sendTextMessage(someBody.getPhoneNumber(), null,
                             "where are you", null, null);
                 }
             }
         });
+
+        button_locate = (Button) findViewById(R.id.button_locate);
+        button_locate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFriendsLocation();
+            }
+        });
+
 
         button_friends = (Button) findViewById(R.id.button_friends);
         button_friends.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +165,10 @@ public class MainActivity extends AppCompatActivity {
         MyLocationConfiguration.LocationMode mCurrentMode = MyLocationConfiguration.LocationMode.FOLLOWING;
         mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(mCurrentMode, true, null));
 
-
+        operatingAnim = AnimationUtils.loadAnimation(this, R.anim.tip);
+        LinearInterpolator lin = new LinearInterpolator();
+        operatingAnim.setInterpolator(lin);
+        imageView_scanline = (ImageView) findViewById(R.id.imageView_scanline);
     }
 
     /**
@@ -200,48 +212,6 @@ public class MainActivity extends AppCompatActivity {
             setMarks(ShowWhat.friends);
         if (SomeBody.enemies.size() != 0)
             setMarks(ShowWhat.enemies);
-        /*if(SomeBody.friends.size()!=0){
-            for(SomeBody someBody:SomeBody.friends){
-                LatLng ll = someBody.getLatLng();
-                if (ll != null) {
-                    OverlayOptions oo = new MarkerOptions().position(ll).icon(bd_friends)
-                            .zIndex(18).draggable(true);
-                    mBaiduMap.addOverlay(oo);
-
-                    //构建文字Option对象，用于在地图上添加文字
-                    OverlayOptions textOption = new TextOptions()
-                            .zIndex(19)
-                            .bgColor(0xAA000000)
-                            .fontSize(40)
-                            .fontColor(0xFF00FF00)
-                            .text(someBody.getName())
-                            .position(ll);
-                    //在地图上添加该文字对象并显示
-                    mBaiduMap.addOverlay(textOption);
-                }
-            }
-        }
-        if(SomeBody.enemies.size()!=0){
-            for(SomeBody someBody:SomeBody.enemies){
-                LatLng ll = someBody.getLatLng();
-                if(ll!=null){
-                    OverlayOptions oo = new MarkerOptions().position(ll).icon(bd_enemies)
-                            .zIndex(18).draggable(true);
-                    mBaiduMap.addOverlay(oo);
-
-                    //构建文字Option对象，用于在地图上添加文字
-                    OverlayOptions textOption = new TextOptions()
-                            .zIndex(19)
-                            .bgColor(0xAA000000)
-                            .fontSize(40)
-                            .fontColor(0xFFFF0000)
-                            .text(someBody.getName())
-                            .position(ll);
-                    //在地图上添加该文字对象并显示
-                    mBaiduMap.addOverlay(textOption);
-                }
-            }
-        }*/
     }
 
     protected enum ShowWhat {friends, enemies}
@@ -250,15 +220,13 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<SomeBody> arrayList;
         BitmapDescriptor bd;
         int color;
-/*        bd_friends = BitmapDescriptorFactory.fromResource(R.drawable.icon_friend);
-        bd_enemies = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);//创建位图描述对象*/
         if (showWhat == ShowWhat.friends) {
             arrayList = SomeBody.friends;
-            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_friend);
+            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_friends);
             color = 0xff00ff00;
         } else {
             arrayList = SomeBody.enemies;
-            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_enemies);
             color = 0xffff0000;
         }
         if (arrayList.size() != 0) {
@@ -299,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-//        saveObject(this,friendsDataFile);
         // 退出时销毁定位
         mLocClient.stop();
         // 关闭定位图层
@@ -307,10 +274,13 @@ public class MainActivity extends AppCompatActivity {
         //在activity执行onDestroy时执行mapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
         mMapView = null;
-        //释放bitmap资源
-        /*bd_friends.recycle();
-        bd_enemies.recycle();*/
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        imageView_scanline.startAnimation(operatingAnim);
     }
 
     @Override
@@ -328,6 +298,22 @@ public class MainActivity extends AppCompatActivity {
         mBaiduMap.clear();//清除标志物
     }
 
+    @Override
+    protected void onStop(){
+        super.onStop();
+        imageView_scanline.clearAnimation();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+
+        super.onConfigurationChanged(newConfig);
+
+        if (operatingAnim != null && imageView_scanline != null && operatingAnim.hasStarted()) {
+            imageView_scanline.clearAnimation();
+            imageView_scanline.startAnimation(operatingAnim);
+        }
+    }
 
     public static final String friendsDataFile = "friendsData.dat";
     public static final String enemiesDatafile = "enemiesData.dat";

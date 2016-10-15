@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -20,10 +19,9 @@ import java.util.ArrayList;
 public class FriendsActivity extends Activity {
     //控件相关
     RelativeLayout F_E_title_layout;
-    TextView F_E_title_textView;
     ListView friendsListView;
-    ImageButton addFriendsButton;
-    ImageButton editButton;
+    Button addButton;
+    Button editButton;
     Button backMapButton;
     Button F_E_Button;
 
@@ -40,10 +38,9 @@ public class FriendsActivity extends Activity {
         Intent intent = getIntent();
         setFriendsMode = intent.getBooleanExtra("setFriendsMode", true);
         F_E_title_layout = (RelativeLayout) findViewById(R.id.layout_F_E_title);
-        F_E_title_textView = (TextView) findViewById(R.id.textView_F_E_title);
 
-        addFriendsButton = (ImageButton) findViewById(R.id.addFriendButton);
-        addFriendsButton.setOnClickListener(new View.OnClickListener() {
+        addButton = (Button) findViewById(R.id.button_add);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FriendsActivity.this, DialogActivity.class);
@@ -52,20 +49,27 @@ public class FriendsActivity extends Activity {
             }
         });
 
-        editButton = (ImageButton) findViewById(R.id.editButton);
+        editButton = (Button) findViewById(R.id.editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!showDeleteButton) {
-                    if((setFriendsMode&&SomeBody.friends.size()!=0)||
-                            (!setFriendsMode&&SomeBody.enemies.size()!=0)) {
-                        editButton.setImageResource(android.R.drawable.ic_menu_revert);
-                        addFriendsButton.setEnabled(false);
+                    if(setFriendsMode&&SomeBody.friends.size()!=0){
+                        editButton.setBackgroundResource(R.drawable.button_edit_friends_down);
+                        addButton.setVisibility(View.GONE);
+                        showDeleteButton = true;
+                    }
+                    else if(!setFriendsMode&&SomeBody.enemies.size()!=0) {
+                        editButton.setBackgroundResource(R.drawable.button_edit_enemies_down);
+                        addButton.setVisibility(View.GONE);
                         showDeleteButton = true;
                     }
                 } else {
-                    editButton.setImageResource(android.R.drawable.ic_menu_edit);
-                    addFriendsButton.setEnabled(true);
+                    if(setFriendsMode)
+                        editButton.setBackgroundResource(R.drawable.button_edit_friends_up);
+                    else
+                        editButton.setBackgroundResource(R.drawable.button_edit_enemies_up);
+                    addButton.setVisibility(View.VISIBLE);
                     showDeleteButton = false;
                 }
                 myArrayAdapter.notifyDataSetChanged();
@@ -85,9 +89,6 @@ public class FriendsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 setFriendsMode=!setFriendsMode;
-                editButton.setImageResource(android.R.drawable.ic_menu_edit);
-                addFriendsButton.setEnabled(true);
-                showDeleteButton = false;
                 initView();
             }
         });
@@ -124,23 +125,22 @@ public class FriendsActivity extends Activity {
 
         initView();
 
-  /*      arrayAdapter = new ArrayAdapter<>(this, R.layout.list_item,R.id.listItemTextView,arrayList);
-        friendsListView.setAdapter(arrayAdapter);*/
     }
 
     protected void initView(){
+        addButton.setVisibility(View.VISIBLE);
+        showDeleteButton = false;
         if(setFriendsMode){
-            F_E_Button.setText(R.string.enemies_list_title);
-            F_E_Button.setTextColor(0xffff0000);
-            F_E_title_textView.setText(R.string.friends_list_title);
-            F_E_title_textView.setTextColor(0xff00ff00);
+            F_E_title_layout.setBackgroundResource(R.drawable.background_friends_list_title);
+            addButton.setBackgroundResource(R.drawable.selector_add_friends);
+            editButton.setBackgroundResource(R.drawable.button_edit_friends_up);
+            F_E_Button.setBackgroundResource(R.drawable.selecor_button_enemies);
             myArrayAdapter = new MyArrayAdapter(SomeBody.friends);
         }else{
-//            F_E_title_layout.setBackgroundResource(R.color.colorRBtnUp);
-            F_E_Button.setText(R.string.friends_list_title);
-            F_E_Button.setTextColor(0xff00ff00);
-            F_E_title_textView.setText(R.string.enemies_list_title);
-            F_E_title_textView.setTextColor(0xffff0000);
+            F_E_title_layout.setBackgroundResource(R.drawable.background_enemies_list_title);
+            addButton.setBackgroundResource(R.drawable.selector_add_enemies);
+            editButton.setBackgroundResource(R.drawable.button_edit_enemies_up);
+            F_E_Button.setBackgroundResource(R.drawable.selector_button_friends);
             myArrayAdapter = new MyArrayAdapter(SomeBody.enemies);
         }
 
@@ -177,15 +177,13 @@ public class FriendsActivity extends Activity {
             }
             TextView textView = (TextView) convertView.findViewById(R.id.listItemTextView);
             ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView_friends_icon);
-            if(setFriendsMode) {/*
-                textView.setBackgroundResource(R.drawable.popup_left);*/
+            if(setFriendsMode) {
                 textView.setTextColor(0xff00ff00);
-                imageView.setImageResource(R.drawable.icon_friend);
+                imageView.setImageResource(R.drawable.icon_friends);
             }
-            else{/*
-                textView.setBackgroundResource(R.drawable.enemies_left);*/
+            else{
                 textView.setTextColor(0xffff0000);
-                imageView.setImageResource(R.drawable.icon_gcoding);
+                imageView.setImageResource(R.drawable.icon_enemies);
             }
             SomeBody someBody = everyone.get(position);
             String text = someBody.getName() + "(" + someBody.getPhoneNumber() + ")";
@@ -198,7 +196,7 @@ public class FriendsActivity extends Activity {
             } else {
                 delete.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
-                textView.setPadding(100,0,0,0);
+                textView.setPadding(120,0,0,0);
             }
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -210,9 +208,7 @@ public class FriendsActivity extends Activity {
                     else
                         MainActivity.saveObject(FriendsActivity.this, MainActivity.enemiesDatafile);
                     if(everyone.size()==0){
-                        editButton.setImageResource(android.R.drawable.ic_menu_edit);
-                        addFriendsButton.setEnabled(true);
-                        showDeleteButton = false;
+                        initView();
                     }
                 }
             });
