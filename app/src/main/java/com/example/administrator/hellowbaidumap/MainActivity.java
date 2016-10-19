@@ -1,8 +1,8 @@
 package com.example.administrator.hellowbaidumap;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -95,9 +95,24 @@ public class MainActivity extends AppCompatActivity {
         button_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String message = "  版本  Version 1.2\n\n" +
+                        "  雷达界面\n\n" +
+                        "    “朋友”按钮——显示朋友列表\n\n" +
+                        "    “敌人”按钮——显示敌人列表\n\n" +
+                        "    “刷新”按钮——向所有朋友和敌人发送询问位置的短信\n\n" +
+                        "    “定位”按钮——在地图上显现所有朋友和敌人的位置图标\n\n\n" +
+                        "  朋友/敌人列表界面\n\n" +
+                        "    “雷达”按钮——返回雷达界面\n\n" +
+                        "    “朋友/敌人”按钮——切换朋友和敌人列表\n\n" +
+                        "    “添加”按钮——添加朋友或敌人\n\n" +
+                        "    “编辑”按钮——在列表每一项中弹出删除按钮\n";
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("版本信息")
-                        .setMessage(R.string.app_version)
+                        .setTitle("帮助")
+                        .setMessage(message)
+                        .setPositiveButton("关闭", new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {}
+                        })
                         .show();
             }
         });
@@ -106,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         button_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                imageView_scanline.setVisibility(View.VISIBLE);//显示扫描线
+                imageView_scanline.startAnimation(operatingAnim);//开启动画
+                /*向所有朋友以及敌人发送短信*/
                 SmsManager smsManager = SmsManager.getDefault();
                 for (SomeBody someBody : SomeBody.friends) {
                     smsManager.sendTextMessage(someBody.getPhoneNumber(), null,
@@ -122,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
         button_locate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFriendsLocation();
+                imageView_scanline.setVisibility(View.GONE);//隐藏扫描线
+                imageView_scanline.clearAnimation();//撤销动画
+                showFriendsLocation();//在地图中显示朋友以及敌人的位置图标
             }
         });
 
@@ -222,11 +242,11 @@ public class MainActivity extends AppCompatActivity {
         int color;
         if (showWhat == ShowWhat.friends) {
             arrayList = SomeBody.friends;
-            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_friends);
+            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_friends);//好友图标
             color = 0xff00ff00;
         } else {
             arrayList = SomeBody.enemies;
-            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_enemies);
+            bd = BitmapDescriptorFactory.fromResource(R.drawable.icon_enemies);//敌人图标
             color = 0xffff0000;
         }
         if (arrayList.size() != 0) {
@@ -236,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 if (ll != null) {
                     OverlayOptions oo = new MarkerOptions().position(ll).icon(bd)
                             .zIndex(18).draggable(true);
-                    mBaiduMap.addOverlay(oo);
+                    mBaiduMap.addOverlay(oo);//在百度地图上添加覆盖物
 
                     //构建文字Option对象，用于在地图上添加文字
                     OverlayOptions textOption = new TextOptions()
@@ -277,11 +297,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
-    protected void onStart(){
-        super.onStart();
-        imageView_scanline.startAnimation(operatingAnim);
-    }
 
     @Override
     protected void onResume() {
@@ -298,22 +313,6 @@ public class MainActivity extends AppCompatActivity {
         mBaiduMap.clear();//清除标志物
     }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        imageView_scanline.clearAnimation();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        super.onConfigurationChanged(newConfig);
-
-        if (operatingAnim != null && imageView_scanline != null && operatingAnim.hasStarted()) {
-            imageView_scanline.clearAnimation();
-            imageView_scanline.startAnimation(operatingAnim);
-        }
-    }
 
     public static final String friendsDataFile = "friendsData.dat";
     public static final String enemiesDatafile = "enemiesData.dat";

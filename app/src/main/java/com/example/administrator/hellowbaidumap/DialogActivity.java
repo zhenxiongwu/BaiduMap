@@ -20,7 +20,7 @@ public class DialogActivity extends Activity {
         setContentView(R.layout.activity_dailog);
 
         Intent intent = getIntent();
-        final boolean ifAddFriend = intent.getBooleanExtra("setFriendsMode",true);
+        final boolean ifAddFriend = intent.getBooleanExtra("setFriendsMode",true);//判断添加朋友还是敌人
 
         TextView textView_title = (TextView) findViewById(R.id.dialogTitle);
         textView_title.setTextColor(0xffff0000);
@@ -52,7 +52,7 @@ public class DialogActivity extends Activity {
                 if ((!name.equals("")) && (!phoneNum.equals("")) ) {
                     boolean ifFNumExist = false;
                     for(SomeBody someBody:SomeBody.friends){
-                        if(someBody.getPhoneNumber().equals(phoneNum)){
+                        if(someBody.getPhoneNumber().equals(phoneNum)){//检查新填写的号码是否已存在
                             ifFNumExist = true;
                             break;
                         }
@@ -78,6 +78,7 @@ public class DialogActivity extends Activity {
                         SomeBody someBody = new SomeBody(name, phoneNum,null);
                         if(ifAddFriend) {
                             SomeBody.friends.add(someBody);
+                            /*添加后立刻保存数据*/
                             MainActivity.saveObject(DialogActivity.this, MainActivity.friendsDataFile);
                         } else {
                             SomeBody.enemies.add(someBody);

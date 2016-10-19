@@ -27,15 +27,16 @@ public class FriendsActivity extends Activity {
 
     MyArrayAdapter myArrayAdapter;
 
-    boolean setFriendsMode;
+    boolean setFriendsMode;//用来判断显示朋友列表还是敌人列表
 
-    boolean showDeleteButton = false;
+    boolean showDeleteButton = false;//ListView中每个Item中的删除图标默认为不显示
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
         Intent intent = getIntent();
+        /*有intent的携带信息判断是显示朋友列表还是敌人列表*/
         setFriendsMode = intent.getBooleanExtra("setFriendsMode", true);
         F_E_title_layout = (RelativeLayout) findViewById(R.id.layout_F_E_title);
 
@@ -44,7 +45,7 @@ public class FriendsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FriendsActivity.this, DialogActivity.class);
-                intent.putExtra("setFriendsMode", setFriendsMode);
+                intent.putExtra("setFriendsMode", setFriendsMode);//告诉DialogActivity添加朋友还是添加敌人
                 startActivity(intent);
             }
         });
@@ -53,23 +54,26 @@ public class FriendsActivity extends Activity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*进入非编辑状态进入编辑状态*/
                 if (!showDeleteButton) {
-                    if(setFriendsMode&&SomeBody.friends.size()!=0){
+                    if(setFriendsMode&&SomeBody.friends.size()!=0){//显示朋友并且列表不为空
                         editButton.setBackgroundResource(R.drawable.button_edit_friends_down);
-                        addButton.setVisibility(View.GONE);
+                        addButton.setVisibility(View.GONE);//隐藏添加按钮，使无法添加朋友
                         showDeleteButton = true;
                     }
-                    else if(!setFriendsMode&&SomeBody.enemies.size()!=0) {
+                    else if(!setFriendsMode&&SomeBody.enemies.size()!=0) {//显示敌人并且列表不为空
                         editButton.setBackgroundResource(R.drawable.button_edit_enemies_down);
                         addButton.setVisibility(View.GONE);
                         showDeleteButton = true;
                     }
-                } else {
+                }
+                    /*由退出编辑状态*/
+                else {
                     if(setFriendsMode)
                         editButton.setBackgroundResource(R.drawable.button_edit_friends_up);
                     else
                         editButton.setBackgroundResource(R.drawable.button_edit_enemies_up);
-                    addButton.setVisibility(View.VISIBLE);
+                    addButton.setVisibility(View.VISIBLE);//使添加按钮可见，允许添加朋友或敌人
                     showDeleteButton = false;
                 }
                 myArrayAdapter.notifyDataSetChanged();
@@ -127,6 +131,7 @@ public class FriendsActivity extends Activity {
 
     }
 
+    /*判断显示朋友还是敌人来初始化界面*/
     protected void initView(){
         addButton.setVisibility(View.VISIBLE);
         showDeleteButton = false;
@@ -179,20 +184,20 @@ public class FriendsActivity extends Activity {
             ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView_friends_icon);
             if(setFriendsMode) {
                 textView.setTextColor(0xff00ff00);
-                imageView.setImageResource(R.drawable.icon_friends);
+                imageView.setImageResource(R.drawable.icon_friends);//ListView的每个Item左边的朋友图标
             }
             else{
                 textView.setTextColor(0xffff0000);
-                imageView.setImageResource(R.drawable.icon_enemies);
+                imageView.setImageResource(R.drawable.icon_enemies);//敌人图标
             }
             SomeBody someBody = everyone.get(position);
             String text = someBody.getName() + "(" + someBody.getPhoneNumber() + ")";
             textView.setText(text);
             Button delete = (Button) (convertView.findViewById(R.id.deleteItemButton));
             if (showDeleteButton) {
-                delete.setVisibility(View.VISIBLE);
-                imageView.setVisibility(View.GONE);
-                textView.setPadding(40,0,0,0);
+                delete.setVisibility(View.VISIBLE);//使删除按钮可见
+                imageView.setVisibility(View.GONE);//隐藏图标
+                textView.setPadding(40,0,0,0);//减少左边的留空，使看上去有左移的效果
             } else {
                 delete.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
@@ -203,12 +208,12 @@ public class FriendsActivity extends Activity {
                 public void onClick(View v) {
                     everyone.remove(position);
                     myArrayAdapter.notifyDataSetChanged();
-                    if(setFriendsMode)
+                    if(setFriendsMode)//删除朋友，删除后立刻保存数据
                         MainActivity.saveObject(FriendsActivity.this, MainActivity.friendsDataFile);
-                    else
+                    else//删除敌人
                         MainActivity.saveObject(FriendsActivity.this, MainActivity.enemiesDatafile);
-                    if(everyone.size()==0){
-                        initView();
+                    if(everyone.size()==0){//删除后，列表为空
+                        initView();//初始化界面
                     }
                 }
             });

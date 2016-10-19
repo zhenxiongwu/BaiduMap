@@ -28,7 +28,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver{
         for (SmsMessage message : messages) {
             fullMessage += message.getMessageBody();
         }
-
+        /*当收到短信“where are you”，自动回复本机位置*/
         if (fullMessage.contains("where are you")) {
             String myLocation = String.valueOf(MainActivity.myLatitude) + "/" +
                     String.valueOf(MainActivity.myLongitude);
@@ -36,6 +36,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver{
             smsManager.sendTextMessage(address, null, myLocation, null, null);
         }
 
+        /*判断发送者是否为朋友或敌人之一*/
         boolean if_from_my_friends = false;
         SomeBody someBody=null;
         for(SomeBody sb:SomeBody.friends){
@@ -54,6 +55,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver{
             }
         }
 
+        /*辨认短信的信息是否为位置信息*/
         if(someBody!= null&&fullMessage.matches("\\d+[.]\\d+/\\d+[.]\\d+")) {
                 String[] ll = fullMessage.split("/");
                 LatLng latLng = new LatLng(Double.parseDouble(ll[0]), Double.parseDouble(ll[1]));
